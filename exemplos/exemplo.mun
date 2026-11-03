@@ -1,0 +1,105 @@
+// Exemplo de programa em Munick
+// Cobre: record, constantes, variável global, vetores, módulos com e sem
+// retorno, passagem por valor e por referência, estruturas de controle,
+// operadores, entrada/saída e os comandos nativos filter() e average().
+
+program RegistroAlunos {
+
+    const int MAX_ALUNOS = 3;
+    const int QTD_NOTAS = 3;
+
+    record Aluno {
+        int id;
+        string nome;
+        float notas[QTD_NOTAS];   // vetor como campo do record
+        float media;
+    }
+
+    int g_totalOperacoes = 0;     // variável global
+
+    // Módulo com retorno, parâmetros por valor
+    module float calcularMedia(float notas[], int qtd) {
+        float soma = 0.0;
+        int i;
+        for (i = 0; i < qtd; i++) {
+            soma = soma + notas[i];
+        }
+        g_totalOperacoes++;
+        return soma / qtd;
+    }
+
+    // Diferencial da linguagem: média direta com average()
+    module float calcularMediaNativa(float notas[]) {
+        g_totalOperacoes++;
+        return average(notas);
+    }
+
+    // Módulo sem retorno, parâmetro por referência
+    module void atualizarMedia(ref Aluno alunoItem) {
+        alunoItem.media = calcularMedia(alunoItem.notas, QTD_NOTAS);
+        g_totalOperacoes++;
+    }
+
+    // Módulo sem retorno, parâmetro por valor
+    module void exibirAluno(Aluno aluno) {
+        int i;
+        write("\nID: ", aluno.id, " | Nome: ", aluno.nome, "\n");
+        write("Notas: ");
+        for (i = 0; i < QTD_NOTAS; i++) {
+            write(aluno.notas[i], " ");
+        }
+        write("\nMédia: ", aluno.media, "\n");
+        g_totalOperacoes++;
+    }
+
+    module int fatorial(int n) {
+        int r = 1;
+        while (n > 1) {
+            r = r * n;
+            n--;
+        }
+        return r;
+    }
+
+    module void main() {
+        int i;
+        int opcao;
+        int quociente = 17 div 5;       // divisão inteira
+        int resto = 17 % 5;             // módulo
+        float potencia = 2.0 ** 3.0;    // exponencial
+        bool ok = (quociente >= 3 and resto != 0) or not (resto <= 1) xor true;
+        char letra = 'A';
+        char quebra = '\n';
+
+        Aluno turma[MAX_ALUNOS] = {
+            {101, "Ana Silva",   {8.5, 7.0, 9.0},  0.0},
+            {102, "Bruno Costa", {6.0, 5.5, 7.0},  0.0},
+            {103, "Carla Souza", {9.5, 9.0, 10.0}, 0.0}
+        };
+
+        write("=== REGISTRO E PROCESSAMENTO DE ALUNOS ===\n");
+
+        for (i = 0; i < MAX_ALUNOS; i++) {
+            atualizarMedia(turma[i]);
+        }
+
+        for (i = 0; i < MAX_ALUNOS; i++) {
+            exibirAluno(turma[i]);
+        }
+
+        // Diferencial da linguagem: filter() com a condição sobre "item"
+        Aluno aprovados[MAX_ALUNOS] = filter(turma, item.media >= 7.0);
+
+        do {
+            write("Digite 0 para sair: ");
+            read(opcao);
+            if (opcao == 0) {
+                write("Fim.\n");
+            } else {
+                write("Fatorial de 5: ", fatorial(5), "\n");
+            }
+        } while (opcao != 0);
+
+        write("\nTotal de operações (Global): ", g_totalOperacoes, "\n");
+    }
+}

@@ -1,0 +1,12 @@
+// Arquivo com erros léxicos propositais, para demonstrar o relato de erros.
+program Teste {
+    int x = 10;
+    int 9abc = 5;              // número mal formado
+    string s = "sem fim;       // string não terminada
+    string t = "tab\q";        // escape inválido
+    char c = 'ab';             // char com mais de um caractere
+    char v = '';               // char vazio
+    int z = x @ 2;             // caractere inválido
+    bool b = !x;               // '!' isolado
+    int fim = 1;               // a análise continua após os erros
+}
